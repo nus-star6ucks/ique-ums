@@ -26,7 +26,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     }
 
     @Override
-    public void delete(User user) {
+    public void delete(Long id) {
 
     }
 }

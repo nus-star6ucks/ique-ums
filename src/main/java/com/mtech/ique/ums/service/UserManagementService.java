@@ -8,5 +8,5 @@ public interface UserManagementService {
     Boolean logout(Long id);
     User signup(User user);
     User updateUserInfo(User user);
-    void delete(User user);
+    void delete(Long id);
 }
