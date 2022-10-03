@@ -1,1 +1,17 @@
+server:
+  port: 8081
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ums
+    username: user1
+    password: pass1
+  jpa:
+    properties:
+      hibernate:
+        # The SQL dialect makes Hibernate generate better SQL for the chosen database
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      ddl-auto: update
+    show-sql: true
