@@ -1,8 +1,10 @@
 name: Build and Deploy to GKE
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["Java CI with Gradle"]
+    types:
+      - completed
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -51,7 +53,7 @@ jobs:
 
     - name: Execute Gradle Build
       working-directory: ./
-      run: ./gradlew build
+      run: ./gradlew bootJar
 
     - name: Docker configuration
       run: |-
