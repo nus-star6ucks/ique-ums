@@ -34,7 +34,6 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
       uses: google-github-actions/get-gke-credentials@v0
       with:
@@ -58,7 +57,19 @@ jobs:
     - name: Docker configuration
       run: |-
         gcloud --quiet auth configure-docker $GAR_LOCATION-docker.pkg.dev
-        
+
+    # debug
+    - uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Set up GKE credentials
+      uses: google-github-actions/get-gke-credentials@v0
+      with:
+        cluster_name: ${{ env.GKE_CLUSTER }}
+        location: ${{ env.GKE_ZONE }}
+
+
     # Build the Docker image
     - name: Build
       run: |-
