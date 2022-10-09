@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.mtech.ique.ums.util.JWTUtil.USER_TYPE;
+
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -68,6 +70,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode msgNode = mapper.createObjectNode();
     msgNode.put("token", token);
+    msgNode.put(USER_TYPE, jwtUtil.verifyToken(token).getClaim(USER_TYPE).asString());
     FilterResponseUtil.ok(response, msgNode);
   }
 

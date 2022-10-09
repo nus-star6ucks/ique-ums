@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.mtech.ique.ums.util.JWTUtil.USER_ID;
+
 @Controller
 @RequestMapping(path = "/users")
 public class UserController {
@@ -77,7 +79,14 @@ public class UserController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Object> deleteUser(@RequestParam("id") Long id) {
+  public ResponseEntity<Object> deleteUser() {
+    Long id =
+        jwtUtil
+            .verifyToken(
+                String.valueOf(
+                    SecurityContextHolder.getContext().getAuthentication().getCredentials()))
+            .getClaim(USER_ID)
+            .asLong();
     userManagementService.delete(id);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }

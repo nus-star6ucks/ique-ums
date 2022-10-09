@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,7 +34,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws IOException, ServletException {
     String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-    if (null != bearerToken && !"".equals(bearerToken)) {
+    if (StringUtils.hasLength(bearerToken)) {
       try {
         DecodedJWT jwt = jwtUtil.verifyToken(bearerToken.replace("Bearer ", "").trim());
         SecurityContextHolder.getContext()
