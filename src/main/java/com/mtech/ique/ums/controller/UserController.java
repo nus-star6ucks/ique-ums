@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.mtech.ique.ums.util.JWTUtil.USER_ID;
+import static com.mtech.ique.ums.util.JWTUtil.USER_NAME;
 
 @Controller
 @RequestMapping(path = "/users")
@@ -41,7 +42,14 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<Object> getUser(@RequestParam("username") String username) {
+  public ResponseEntity<Object> getUser() {
+    String username =
+        jwtUtil
+            .verifyToken(
+                String.valueOf(
+                    SecurityContextHolder.getContext().getAuthentication().getCredentials()))
+            .getClaim(USER_NAME)
+            .asString();
     User user = userManagementService.findByName(username);
     if (null == user) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
