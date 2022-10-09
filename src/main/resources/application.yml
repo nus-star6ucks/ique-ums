@@ -1,20 +1,28 @@
 server:
   port: 8081
 
-#spring:
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/ums
-#    username: user1
-#    password: pass1
-#  jpa:
-#    properties:
-#      hibernate:
-#        # The SQL dialect makes Hibernate generate better SQL for the chosen database
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
-#    hibernate:
-#      # Hibernate ddl auto (create, create-drop, validate, update)
-#      ddl-auto: update
-#    show-sql: true
+spring:
+  cloud:
+    gcp:
+      sql:
+        instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
+        database-name: ique
+  datasource:
+    #    url: jdbc:postgresql://localhost:5432/iqueue
+    #    url: jdbc:postgresql://34.124.142.13:5432/ique
+    url: jdbc:postgresql:///ique
+    username: ${DB_USERNAME:user1}
+    password: ${DB_PASSWORD:pass1}
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        # The SQL dialect makes Hibernate generate better SQL for the chosen database
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      ddl-auto: update
+    show-sql: true
 
 management:
   endpoints:
@@ -24,3 +32,10 @@ management:
   endpoint:
     shutdown:
       enabled: true
+
+jwt:
+  key: ${JWT_KEY:iqueue_secret}
+  iss: ums
+  sub: iqueue
+  # JWT valid time, the unit is minute.
+  duration: ${JWT_VALID_TIME:30}
