@@ -8,14 +8,14 @@ spring:
       sql:
         instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
         database-name: ique
-      credentials:
-        location: file:ique-star6ucks-b31d33113177.json
+#       credentials:
+#         location: file:ique-star6ucks-b31d33113177.json
   datasource:
     #    url: jdbc:postgresql://localhost:5432/iqueue
     #    url: jdbc:postgresql://34.124.142.13:5432/ique
-    url: jdbc:postgresql:///ique
-    username: ${DB_USERNAME:ums}
-    password: ${DB_PASSWORD:&2ZxqMQF'2{fQT}b}
+    url: jdbc:postgresql://ique
+    username: ${DB_USER}
+    password: ${DB_PASS}
     initialization-mode: always
   jpa:
     properties:
