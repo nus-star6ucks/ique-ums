@@ -4,9 +4,12 @@ server:
 spring:
   cloud:
     gcp:
+      project-id: ique-star6ucks
       sql:
         instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
         database-name: ique
+      credentials:
+        location: file:ique-star6ucks-b31d33113177.json
   datasource:
     #    url: jdbc:postgresql://localhost:5432/iqueue
     #    url: jdbc:postgresql://34.124.142.13:5432/ique
