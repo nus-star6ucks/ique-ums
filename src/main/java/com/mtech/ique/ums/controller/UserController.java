@@ -20,6 +20,7 @@ import static com.mtech.ique.ums.util.JWTUtil.USER_ID;
 import static com.mtech.ique.ums.util.JWTUtil.USER_NAME;
 
 @Controller
+@CrossOrigin
 @RequestMapping(path = "/users")
 public class UserController {
 
