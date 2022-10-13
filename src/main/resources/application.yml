@@ -14,8 +14,8 @@ spring:
     #    url: jdbc:postgresql://localhost:5432/iqueue
     #    url: jdbc:postgresql://34.124.142.13:5432/ique
     url: jdbc:postgresql://ique
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    username: ${DB_USER:ums}
+    password: ${DB_PASS:&2ZxqMQF'2{fQT}b}
     initialization-mode: always
   jpa:
     properties:
