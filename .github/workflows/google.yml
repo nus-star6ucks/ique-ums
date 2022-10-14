@@ -86,4 +86,4 @@ jobs:
         
     - name: Run Cloud Build Trigger
       run: |-
-        gcloud beta builds triggers run ique --branch=main
+        gcloud beta builds triggers run ique-ums --branch=main
