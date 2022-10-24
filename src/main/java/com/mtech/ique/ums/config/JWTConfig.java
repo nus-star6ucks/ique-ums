@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class JWTConfig {
 
   private String key;
+  private String secret;
   private String iss;
   private String sub;
   private Integer duration;

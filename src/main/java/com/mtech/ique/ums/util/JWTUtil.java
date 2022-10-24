@@ -32,7 +32,7 @@ public class JWTUtil {
   public String generateToken(User user) {
     String token = null;
     try {
-      Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getKey());
+      Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecret());
       Map<String, Object> payloadClaims = new HashMap<>();
       payloadClaims.put(USER_ID, user.getId());
       payloadClaims.put(USER_NAME, user.getUsername());

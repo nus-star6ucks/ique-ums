@@ -38,7 +38,8 @@ management:
 
 jwt:
   key: ${JWT_KEY:iqueue_secret}
+  secret: ${JWT_SECRET:iqueue_secret}
   iss: ums
   sub: iqueue
   # JWT valid time, the unit is minute.
-  duration: ${JWT_VALID_TIME:30}
+  duration: ${JWT_VALID_TIME:90}
