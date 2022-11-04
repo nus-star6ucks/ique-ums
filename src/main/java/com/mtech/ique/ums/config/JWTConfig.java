@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class JWTConfig {
 
-  private String key;
+  private String publicKey;
+  private String privateKey;
   private String secret;
   private String iss;
   private String sub;

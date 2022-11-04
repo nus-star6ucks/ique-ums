@@ -15,19 +15,11 @@ spring:
       resource-server:
         jwt:
           jws-algorithm: RS256
-          public-key-location: file:${JWT_PUBLIC_KEY:jwt_key.pub}
-  cloud:
-    gcp:
-      project-id: ique-star6ucks
-      sql:
-        instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
-        database-name: ique
-      credentials:
-        location: file:/secrets/credentials.json
+          public-key-location: file:./jwt_key.pub
   datasource:
-    url: jdbc:postgresql://ique
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    url: jdbc:postgresql://localhost:5432/iqueue
+    username: ${DB_USER:user1}
+    password: ${DB_PASS:pass1}
     initialization-mode: always
   jpa:
     properties:

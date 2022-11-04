@@ -1,62 +1,62 @@
 package com.mtech.ique.ums.security.config;
 
-import com.mtech.ique.ums.security.filter.JWTAuthenticationFilter;
-import com.mtech.ique.ums.security.filter.LoginFilter;
-import com.mtech.ique.ums.util.JWTUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mtech.ique.ums.security.handler.Oauth2FailureHandler;
+import com.mtech.ique.ums.security.handler.Oauth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfig {
 
-  public static final String SIGNUP_URL = "/users";
-  private final JWTUtil jwtUtil;
-  private final UserDetailsService userDetailsService;
-  private final PasswordEncoder passwordEncoder;
+  private final Oauth2SuccessHandler oauth2SuccessHandler;
+  private final Oauth2FailureHandler oauth2FailureHandler;
 
-  @Autowired
-  @Lazy
   public SecurityConfig(
-      JWTUtil jwtUtil, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-    this.jwtUtil = jwtUtil;
-    this.userDetailsService = userDetailsService;
-    this.passwordEncoder = passwordEncoder;
+      @Lazy Oauth2SuccessHandler oauth2SuccessHandler, Oauth2FailureHandler oauth2FailureHandler) {
+    this.oauth2SuccessHandler = oauth2SuccessHandler;
+    this.oauth2FailureHandler = oauth2FailureHandler;
   }
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors()
         .and()
         .csrf()
         .disable()
         .authorizeRequests()
+        .antMatchers("/users/login")
+        .anonymous()
+        .antMatchers(HttpMethod.POST, "/users")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()
-        .addFilter(new LoginFilter(authenticationManager(), jwtUtil))
-        .addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+        .oauth2Login()
+        .successHandler(oauth2SuccessHandler)
+        .failureHandler(oauth2FailureHandler)
+        .and()
+        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+    return http.build();
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-  }
-
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers(HttpMethod.POST, SIGNUP_URL);
+  @Bean
+  public AuthenticationManager authenticationManager(
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    return authenticationConfiguration.getAuthenticationManager();
   }
 
   @Bean

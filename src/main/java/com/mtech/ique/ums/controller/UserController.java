@@ -8,7 +8,9 @@ import com.mtech.ique.ums.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,31 +45,23 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<Object> getUser() {
-    String username =
-        jwtUtil
-            .verifyToken(
-                String.valueOf(
-                    SecurityContextHolder.getContext().getAuthentication().getCredentials()))
-            .getClaim(USER_NAME)
-            .asString();
-    User user = userManagementService.findByName(username);
+  public ResponseEntity<Object> getUser(@AuthenticationPrincipal Jwt jwtPrincipal) {
+    User user = userManagementService.findByName(jwtPrincipal.getClaimAsString(USER_NAME));
     if (null == user) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
     return new ResponseEntity<>(removeSensitiveInfo(objectMapper.valueToTree(user)), HttpStatus.OK);
   }
 
-  //  @PostMapping("/login")
-  //  public ResponseEntity<Map<String, String>> login(@RequestBody HashMap<String, String>
-  // loginForm) {
-  //    userManagementService.login(loginForm.get("username"), loginForm.get("password"));
-  //    Map<String, String> map = new HashMap<>();
-  //    map.put("token", "token");
-  //    map.put("userType", "userType");
-  //    return new ResponseEntity<>(map, HttpStatus.OK);
-  //  }
+  @PostMapping("/login")
+  public ResponseEntity<Object> login(@RequestBody HashMap<String, String> loginForm) {
+    ObjectNode objectNode =
+        userManagementService.login(loginForm.get("username"), loginForm.get("password"));
+    if (null == objectNode) {
+      return new ResponseEntity<>("Authentication failed!", HttpStatus.UNAUTHORIZED);
+    }
+    return ResponseEntity.ok(objectNode);
+  }
 
   @PostMapping("/logout")
   public ResponseEntity<Object> logout() {
@@ -88,7 +82,7 @@ public class UserController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Object> deleteUser() {
+  public ResponseEntity<Object> deleteUser(@AuthenticationPrincipal Jwt jwtPrincipal) {
     Long id =
         jwtUtil
             .verifyToken(
@@ -96,7 +90,7 @@ public class UserController {
                     SecurityContextHolder.getContext().getAuthentication().getCredentials()))
             .getClaim(USER_ID)
             .asLong();
-    userManagementService.delete(id);
+    userManagementService.delete(jwtPrincipal.getClaim(USER_ID));
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
