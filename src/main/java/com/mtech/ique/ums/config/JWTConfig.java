@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class JWTConfig {
-
   private String publicKey;
   private String privateKey;
   private String secret;

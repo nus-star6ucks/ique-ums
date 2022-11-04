@@ -83,25 +83,14 @@ public class UserController {
 
   @DeleteMapping
   public ResponseEntity<Object> deleteUser(@AuthenticationPrincipal Jwt jwtPrincipal) {
-    Long id =
-        jwtUtil
-            .verifyToken(
-                String.valueOf(
-                    SecurityContextHolder.getContext().getAuthentication().getCredentials()))
-            .getClaim(USER_ID)
-            .asLong();
     userManagementService.delete(jwtPrincipal.getClaim(USER_ID));
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @GetMapping("/refresh")
-  public ResponseEntity<Object> refreshToken() {
-    String newToken =
-        jwtUtil.refreshToken(
-            String.valueOf(
-                SecurityContextHolder.getContext().getAuthentication().getCredentials()));
+  public ResponseEntity<Object> refreshToken(@AuthenticationPrincipal Jwt jwtPrincipal) {
     Map<String, String> responseBody = new HashMap<>();
-    responseBody.put("token", newToken);
+    responseBody.put("token", jwtUtil.generateToken(jwtPrincipal.getClaimAsString(USER_NAME)));
     return new ResponseEntity<>(responseBody, HttpStatus.OK);
   }
 

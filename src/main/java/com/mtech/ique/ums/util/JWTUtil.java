@@ -88,10 +88,6 @@ public class JWTUtil {
     return verifier.verify(token);
   }
 
-  public String refreshToken(String oldToken) {
-    return generateToken(JWT.decode(oldToken).getClaim(USER_NAME).asString());
-  }
-
   public RSAPublicKey readPublicKey(File file) {
     try (FileReader keyReader = new FileReader(file)) {
       PEMParser pemParser = new PEMParser(keyReader);
