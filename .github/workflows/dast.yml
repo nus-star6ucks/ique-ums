@@ -1,0 +1,21 @@
+name: "DAST"
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "dev" ]
+  schedule:
+    - cron: '4 11 * * 1'
+
+jobs:
+  stackhawk-hawkscan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: stackhawk/hawkscan-action@v1.3.4
+      with:
+        apiKey: ${{ secrets.DAST_HAWK_API_KEY }}
+      env:
+        APP_HOST: https://ique.vercel.app
