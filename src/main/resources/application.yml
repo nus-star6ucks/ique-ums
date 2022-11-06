@@ -15,7 +15,7 @@ spring:
       resource-server:
         jwt:
           jws-algorithm: RS256
-          public-key-location: file:${JWT_PUBLIC_KEY:jwt_key.pub}
+          public-key-location: file:${JWT_PUBLIC_KEY:/secrets/jwt_key.pub}
   cloud:
     gcp:
       project-id: ique-star6ucks
@@ -49,8 +49,8 @@ management:
       enabled: true
 
 jwt:
-  publicKey: ${JWT_PUBLIC_KEY:jwt_key.pub}
-  privateKey: ${JWT_PRIVATE_KEY:jwt_key}
+  publicKey: ${JWT_PUBLIC_KEY:/secrets/jwt_key.pub}
+  privateKey: ${JWT_PRIVATE_KEY:/secrets/jwt_key}
   secret: ${JWT_SECRET:iqueue_secret}
   iss: ums
   sub: iqueue
