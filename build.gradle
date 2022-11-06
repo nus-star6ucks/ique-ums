@@ -1,3 +1,15 @@
+import proguard.gradle.ProGuardTask
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.guardsquare:proguard-gradle:7.2.1'
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.6.12'
     id 'io.spring.dependency-management' version '1.0.14.RELEASE'
@@ -24,6 +36,7 @@ ext {
 }
 
 dependencies {
+    implementation 'com.guardsquare:proguard-gradle:7.2.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -34,6 +47,7 @@ dependencies {
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.70'
     implementation 'com.google.cloud:spring-cloud-gcp-starter'
     implementation 'com.google.cloud.sql:postgres-socket-factory:1.7.0'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -50,4 +64,86 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+task extractJar(type: Copy) {
+    dependsOn tasks.assemble
+
+    def zipFile = file("${buildDir}/libs/ums-${version}.jar")
+    def outputDir = file("${buildDir}/extracted/")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+task deleteClasses(type: Delete) {
+    delete "${buildDir}/extracted/BOOT-INF/classes/"
+}
+
+task copyObfuscatedClasses(type: Copy) {
+    dependsOn tasks.deleteClasses
+
+    from zipTree("${buildDir}/obfuscatedClasses.jar")
+    into "${buildDir}/extracted/BOOT-INF/classes/"
+}
+
+task deleteObfuscated(type: Delete) {
+    delete 'build/obfuscatedClasses.jar'
+}
+
+task repackage(type: Zip) {
+    dependsOn tasks.deleteClasses
+    dependsOn tasks.copyObfuscatedClasses
+    dependsOn tasks.deleteObfuscated
+
+    from  "${buildDir}/extracted"
+    entryCompression ZipEntryCompression.STORED
+    archiveFileName= "ums-${archiveVersion.get()}-obfuscated.jar"
+    destinationDirectory = file("${buildDir}/libs")
+}
+
+task proguard(type: ProGuardTask) {
+    dependsOn tasks.extractJar
+
+    verbose
+
+    injars  "${buildDir}/extracted/BOOT-INF/classes"
+    outjars "${buildDir}/obfuscatedClasses.jar"
+
+    // Automatically handle the Java version of this build.
+    if (System.getProperty('java.version').startsWith('1.')) {
+        // Before Java 9, the runtime classes were packaged in a single jar file.
+        libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    } else {
+        // As of Java 9, the runtime classes are packaged in modular jmod files.
+        libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod", jarfilter: '!**.jar', filter: '!module-info.class'
+        //libraryjars "${System.getProperty('java.home')}/jmods/....."
+    }
+
+    // This will contain the Spring dependencies.
+    libraryjars sourceSets.main.compileClasspath
+
+    keepdirectories
+
+    // Keep the main class entry point.
+    keep 'public class com.mtech.ique.ums.UserApplication { \
+            public static void main(java.lang.String[]); \
+         }'
+
+    keepattributes '*Annotation*'
+
+    // This simple example requires classes with @Component annotation classes
+    // to be kept, since otherwise components could end up with clashing names,
+    // if they do not set the name explicitly.
+    keep 'public @org.springframework.stereotype.Component class *'
+
+    // You may need to keep classes or members based on other annotations such as:
+    keepclassmembers 'public class * { \
+            @org.springframework.beans.factory.annotation.Autowired *; \
+            @org.springframework.beans.factory.annotation.Value *; \
+        }'
+
+    // After ProGuard has executed, repackage the app.
+    finalizedBy tasks.repackage
 }
