@@ -1,6 +1,6 @@
 server:
   port: 8081
-
+  use-forward-headers: true
 spring:
   security:
     oauth2:
