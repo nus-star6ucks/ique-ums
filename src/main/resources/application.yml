@@ -23,7 +23,7 @@ spring:
         instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
         database-name: ique
       credentials:
-        location: file:/rsa-secrets/credentials.json
+        location: file:/secrets/credentials.json
   datasource:
     url: jdbc:postgresql://ique
     username: ${DB_USER}
