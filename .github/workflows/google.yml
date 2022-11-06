@@ -8,11 +8,11 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GAR_LOCATION: australia-southeast2
-  GKE_CLUSTER: ique-app  
-  GKE_ZONE: australia-southeast2-a  
+  GAR_LOCATION: asia-southeast1
+  GKE_CLUSTER: ique-app
+  GKE_ZONE: asia-southeast1-a
   DEPLOYMENT_NAME: ique-ums
-  REPOSITORY: star6ucks-ique
+  REPOSITORY: ique-star6ucks
   IMAGE: ique-ums
 
 jobs:
