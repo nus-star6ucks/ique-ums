@@ -13,6 +13,7 @@ spring:
           google:
             clientId: ${GOOGLE_CLIENT_ID}
             clientSecret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: https://ique.vercel.app/api/login/oauth2/code/google
       resource-server:
         jwt:
           jws-algorithm: RS256
