@@ -66,6 +66,9 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+task printVersionName {
+  println version
+}
 
 task extractJar(type: Copy) {
     dependsOn tasks.assemble
