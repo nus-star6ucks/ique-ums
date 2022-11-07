@@ -8,12 +8,12 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GAR_LOCATION: asia-southeast1
-  GKE_CLUSTER: ique-app
-  GKE_ZONE: asia-southeast1-a
-  DEPLOYMENT_NAME: ique-ums
-  REPOSITORY: ique-star6ucks
-  IMAGE: ique-ums
+  GAR_LOCATION: ${{ secrets.GAR_LOCATION }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.GKE_ZONE }}
+  DEPLOYMENT_NAME: ${{ secrets.DEPLOYMENT_NAME }}
+  REPOSITORY: ${{ secrets.REPOSITORY }}
+  IMAGE: ${{ secrets.IMAGE }}
 
 jobs:
   setup-build-publish-deploy:
