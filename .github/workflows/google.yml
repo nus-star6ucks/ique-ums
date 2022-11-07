@@ -53,6 +53,10 @@ jobs:
     - name: Execute Gradle Build
       working-directory: ./
       run: ./gradlew bootJar
+      
+    - name: Obfuscate
+      working-directory: ./
+      run: ./gradlew clean proguard --info
 
     - name: Docker configuration
       run: |-
