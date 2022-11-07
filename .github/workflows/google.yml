@@ -50,6 +50,11 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
 
+    - name: Retrieve Version
+      run: |
+       echo "::set-output name=VERSION_NAME::$(${{github.workspace}}/gradlew -q printVersionName)"
+      id: jar_version
+
     - name: Execute Gradle Build
       working-directory: ./
       run: ./gradlew bootJar
@@ -81,7 +86,7 @@ jobs:
           --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:latest" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
-          --build-arg JAR_FILE=build/libs/\*.jar \
+          --build-arg JAR_FILE=build/libs/ums-${{steps.jar_version.outputs.VERSION_NAME}}.jar \
           .
     # Push the Docker image to Google Artifact Registry
     - name: Publish
