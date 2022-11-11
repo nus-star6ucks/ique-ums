@@ -1,0 +1,60 @@
+server:
+  port: 8081
+  use-forward-headers: true
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}
+            redirect-uri: https://ique.vercel.app/api/login/oauth2/code/github
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: https://ique.vercel.app/api/login/oauth2/code/google
+      resource-server:
+        jwt:
+          jws-algorithm: RS256
+          public-key-location: file:${JWT_PUBLIC_KEY:/rsa-secrets/jwt_key.pub}
+  cloud:
+    gcp:
+      project-id: ique-star6ucks
+      sql:
+        instance-connection-name: ique-star6ucks:asia-southeast1:iqueue
+        database-name: ique
+      credentials:
+        location: file:/secrets/credentials.json
+  datasource:
+    url: jdbc:postgresql://ique
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        # The SQL dialect makes Hibernate generate better SQL for the chosen database
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      ddl-auto: update
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+
+jwt:
+  publicKey: ${JWT_PUBLIC_KEY:/rsa-secrets/jwt_key.pub}
+  privateKey: ${JWT_PRIVATE_KEY:/rsa-secrets/jwt_key}
+  secret: ${JWT_SECRET:iqueue_secret}
+  iss: ums
+  sub: iqueue
+  # JWT valid time, the unit is minute.
+  duration: ${JWT_VALID_TIME:90}

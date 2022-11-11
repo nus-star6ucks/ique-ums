@@ -1,5 +1,3 @@
-// package com.mtech.ique.ums;
-
 // import org.junit.jupiter.api.Test;
 // import org.springframework.boot.test.context.SpringBootTest;
 
@@ -9,5 +7,3 @@
 // 	@Test
 // 	void contextLoads() {
 // 	}
-
-// }

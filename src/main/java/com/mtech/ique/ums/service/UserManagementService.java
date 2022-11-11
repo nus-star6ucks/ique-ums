@@ -1,12 +1,19 @@
 package com.mtech.ique.ums.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mtech.ique.ums.model.entity.User;
 
 public interface UserManagementService {
 
-    Boolean login(String userName, String password);
-    Boolean logout(Long id);
-    User signup(User user);
-    User updateUserInfo(User user);
-    void delete(Long id);
+  ObjectNode login(String username, String password);
+
+  Boolean logout(Long id);
+
+  User findByName(String name);
+
+  User signup(User user);
+
+  User updateUserInfo(User user);
+
+  void delete(Long id);
 }
